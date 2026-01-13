@@ -1,33 +1,46 @@
 package com.mycompany.producto.api.service;
 
+import com.mycompany.producto.api.dao.ProductoDAO;
 import com.mycompany.producto.api.model.Producto;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Service
 public class ProductoService implements GenericService<Producto> {
+    
+    @Autowired
+    private final ProductoDAO prodDAO;
+
+    public ProductoService(ProductoDAO prodDAO) {
+        this.prodDAO = prodDAO;
+    }
 
     @Override
     public void save(Producto entity) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        prodDAO.crear(entity);
     }
 
     @Override
     public Producto findById(int id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return prodDAO.leer(id);
     }
 
     @Override
     public List<Producto> findAll() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return prodDAO.leerTodos();
     }
 
     @Override
     public void update(Producto entity) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        prodDAO.actualizar(entity);
     }
 
     @Override
     public void delete(int id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        prodDAO.eliminar(id);
     }
 
 }
