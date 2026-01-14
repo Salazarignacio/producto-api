@@ -20,10 +20,12 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
     @Override
     public void crear(Producto entity) throws Exception {
+        if (entity == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
         String sql = "INSERT INTO Producto (articulo, categoria, precio, stock, codigo) VALUES (?,?,?,?,?)";
 
-        try (
-                Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, entity.getArticulo());
             stmt.setString(2, entity.getCategoria());
             stmt.setDouble(3, entity.getPrecio());
@@ -36,19 +38,24 @@ public class ProductoDAO implements GenericDAO<Producto> {
                 throw new SQLException("No se pudo crear el producto");
             }
 
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                Long idGenerado = rs.getLong(1);
-                entity.setId(idGenerado);
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    Long idGenerado = rs.getLong(1);
+                    entity.setId(idGenerado);
+                } else {
+                    throw new SQLException("El producto fue creado pero no se pudo obtener el ID generado");
+                }
             }
-
-            System.out.println("Producto creado: " + entity);
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear el producto en la base de datos", e);
         }
-
     }
 
     @Override
     public Producto leer(Integer id) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para leer producto");
+        }
         String sql = "SELECT * FROM Producto WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,8 +73,6 @@ public class ProductoDAO implements GenericDAO<Producto> {
                 );
 
                 prod.setId(rs.getLong("id"));
-
-                System.out.println("Producto leído: " + prod);
                 return prod;
             } else {
                 throw new SQLException("No se encontró producto con id " + id);
@@ -85,12 +90,21 @@ public class ProductoDAO implements GenericDAO<Producto> {
                 Producto prod = new Producto(rs.getString("articulo"), rs.getString("categoria"), rs.getDouble("precio"), rs.getInt("stock"), rs.getInt("codigo"));
                 productos.add(prod);
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error al leer la lista de productos", e);
         }
         return productos;
     }
 
     @Override
     public void actualizar(Integer id, Producto entity) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para actualizar producto");
+        }
+
+        if (entity == null) {
+            throw new IllegalArgumentException("El producto a actualizar no puede ser null");
+        }
         String sql = "UPDATE Producto "
                 + "SET articulo = ?, categoria = ?, precio = ?, stock = ?, codigo = ? "
                 + "WHERE id = ?";
@@ -103,22 +117,27 @@ public class ProductoDAO implements GenericDAO<Producto> {
             stmt.setLong(6, id);
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas == 0) {
-                throw new SQLException("ID no encontrado");
+                throw new SQLException("ID no encontrado" + id);
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el producto con id " + id, e);
         }
     }
 
     @Override
     public void eliminar(Integer id) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para eliminar producto");
+        }
         String sql = "DELETE FROM Producto WHERE ID = ?";
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas == 0) {
-                throw new SQLException("ID no encontrado");
-            } else {
-                System.out.println("ID eliminado correctamente");
+                throw new SQLException("ID no encontrado " + id);
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el producto con id " + id, e);
         }
     }
 
