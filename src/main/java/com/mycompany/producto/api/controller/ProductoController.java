@@ -2,6 +2,8 @@ package com.mycompany.producto.api.controller;
 
 import com.mycompany.producto.api.model.Producto;
 import com.mycompany.producto.api.service.ProductoService;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,20 +28,19 @@ public class ProductoController {
     }
 
     @GetMapping("/all")
-    public String leerProductos() throws Exception {
-        pService.findAll();
-        return "Productos";
+    public List<Producto> leerProductos() throws Exception {
+        return pService.findAll();
+
     }
 
     @GetMapping("/{id}")
-    public String leerProducto(@PathVariable int id) throws Exception {
-        pService.findById(id);
-        return "Producto con id " + id;
+    public Producto leerProducto(@PathVariable int id) throws Exception {
+        return pService.findById(id);
     }
 
-    @PutMapping
-    public String ActualizarProducto(@RequestBody Producto producto) throws Exception {
-        pService.update(producto);
+    @PutMapping("/{id}")
+    public String ActualizarProducto(@PathVariable int id, @RequestBody Producto producto) throws Exception {
+        pService.update(id, producto);
         return "Producto actualizado";
     }
 

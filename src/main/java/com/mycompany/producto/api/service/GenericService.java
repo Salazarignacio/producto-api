@@ -10,7 +10,7 @@ public interface GenericService<T> {
 
     List<T> findAll() throws Exception;
 
-    void update(T entity) throws Exception;
+    void update(int id, T entity) throws Exception;
 
     void delete(int id) throws Exception;
 }

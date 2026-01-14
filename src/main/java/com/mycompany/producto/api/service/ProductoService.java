@@ -34,8 +34,8 @@ public class ProductoService implements GenericService<Producto> {
     }
 
     @Override
-    public void update(Producto entity) throws Exception {
-        prodDAO.actualizar(entity);
+    public void update(int id, Producto entity) throws Exception {
+        prodDAO.actualizar(id, entity);
     }
 
     @Override

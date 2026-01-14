@@ -10,7 +10,7 @@ public interface GenericDAO<T> {
 
     List<T> leerTodos() throws Exception;
 
-    void actualizar(T entity) throws Exception;
+    void actualizar(Integer id, T entity) throws Exception;
 
     void eliminar(Integer id) throws Exception;
 }
