@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class ProductoService implements GenericService<Producto> {
-    
+
     @Autowired
     private final ProductoDAO prodDAO;
 
@@ -20,27 +20,67 @@ public class ProductoService implements GenericService<Producto> {
 
     @Override
     public void save(Producto entity) throws Exception {
-        prodDAO.crear(entity);
+        if (entity == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+
+        if (entity.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a cero");
+        }
+
+        try {
+            prodDAO.crear(entity);
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo crear el producto", e);
+        }
     }
 
     @Override
     public Producto findById(int id) throws Exception {
-        return prodDAO.leer(id);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+
+        try {
+            return prodDAO.leer(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar el producto con id " + id, e);
+        }
     }
 
     @Override
     public List<Producto> findAll() throws Exception {
-        return prodDAO.leerTodos();
+        try {
+            return prodDAO.leerTodos();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al obtener la lista de productos", e);
+        }
     }
 
     @Override
     public void update(int id, Producto entity) throws Exception {
-        prodDAO.actualizar(id, entity);
+        if (entity == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+
+        try {
+            prodDAO.actualizar(id, entity);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar el producto con id " + id, e);
+        }
     }
 
     @Override
     public void delete(int id) throws Exception {
-        prodDAO.eliminar(id);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+
+        try {
+            prodDAO.eliminar(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar el producto con id " + id, e);
+        }
     }
 
 }
