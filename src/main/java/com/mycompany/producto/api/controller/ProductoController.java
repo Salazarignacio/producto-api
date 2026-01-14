@@ -5,6 +5,8 @@ import com.mycompany.producto.api.service.ProductoService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,31 +24,58 @@ public class ProductoController {
     private ProductoService pService;
 
     @PostMapping
-    public String crearProducto(@RequestBody Producto producto) throws Exception {
-        pService.save(producto);
-        return "Producto guardado correctamente";
+    public ResponseEntity<String> crearProducto(@RequestBody Producto producto) throws Exception {
+        try {
+            pService.save(producto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Producto guardado correctamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear el producto");
+        }
     }
 
     @GetMapping("/all")
-    public List<Producto> leerProductos() throws Exception {
-        return pService.findAll();
-
+    public ResponseEntity<List<Producto>> leerProductos() throws Exception {
+        return ResponseEntity.ok(pService.findAll());
     }
 
     @GetMapping("/{id}")
-    public Producto leerProducto(@PathVariable int id) throws Exception {
-        return pService.findById(id);
+    public ResponseEntity<?> leerProducto(@PathVariable int id) throws Exception {
+        try {
+            return ResponseEntity.ok(pService.findById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Producto no encontrado");
+        }
     }
 
     @PutMapping("/{id}")
-    public String ActualizarProducto(@PathVariable int id, @RequestBody Producto producto) throws Exception {
-        pService.update(id, producto);
-        return "Producto actualizado";
+    public ResponseEntity<String> ActualizarProducto(@PathVariable int id, @RequestBody Producto producto) throws Exception {
+        try {
+            pService.update(id, producto);
+            return ResponseEntity.ok("Producto actualizado");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se pudo actualizar el producto");
+        }
     }
 
     @DeleteMapping("/{id}")
-    public String EliminarProducto(@PathVariable int id) throws Exception {
-        pService.delete(id);
-        return "Producto Eliminado";
+    public ResponseEntity<String> EliminarProducto(@PathVariable int id) throws Exception {
+        try {
+            pService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
