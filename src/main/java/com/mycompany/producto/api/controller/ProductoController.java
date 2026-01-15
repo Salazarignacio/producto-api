@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoController {
@@ -24,11 +26,10 @@ public class ProductoController {
     private ProductoService pService;
 
     @PostMapping
-    public ResponseEntity<String> crearProducto(@RequestBody Producto producto) throws Exception {
+    public ResponseEntity<?> crearProducto(@RequestBody Producto producto) throws Exception {
         try {
             pService.save(producto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Producto guardado correctamente");
+            return ResponseEntity.status(HttpStatus.CREATED).body(producto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
