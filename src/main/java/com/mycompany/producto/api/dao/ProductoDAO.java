@@ -142,4 +142,32 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
 
+    public Producto leerCodigo(Integer codigo) throws Exception {
+        if (codigo == null) {
+            throw new IllegalArgumentException("Codigo inválido para leer producto");
+        }
+        String sql = "SELECT * FROM Producto WHERE codigo = ?";
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, codigo);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Producto prod = new Producto(
+                        rs.getString("articulo"),
+                        rs.getString("categoria"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getInt("codigo")
+                );
+
+                prod.setId(rs.getLong("id"));
+                return prod;
+            } else {
+                throw new SQLException("No se encontró producto con codigo " + codigo);
+            }
+        }
+    }
+
 }

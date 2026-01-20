@@ -79,4 +79,16 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @GetMapping("/codigo/{code}")
+    public ResponseEntity<?> leerCodigo(@PathVariable int code) throws Exception {
+        try {
+            return ResponseEntity.ok(pService.findByCode(code));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Producto no encontrado");
+        }
+    }
 }

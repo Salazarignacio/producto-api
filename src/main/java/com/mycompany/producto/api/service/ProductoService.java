@@ -83,4 +83,15 @@ public class ProductoService implements GenericService<Producto> {
         }
     }
 
+    public Producto findByCode(int code) throws Exception {
+        if (code <= 0) {
+            throw new IllegalArgumentException("Código inválido");
+        }
+
+        try {
+            return prodDAO.leerCodigo(code);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar el producto con código " + code, e);
+        }
+    }
 }
