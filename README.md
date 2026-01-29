@@ -44,13 +44,15 @@ La aplicación requiere una base de datos con la siguiente estructura:
 
 ```sql
 CREATE TABLE Producto (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
     articulo VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50),
-    precio DOUBLE NOT NULL,
-    stock INT NOT NULL,
-    codigo INT UNIQUE NOT NULL
+    categoria VARCHAR(50) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL CHECK (precio >= 0),
+    stock INT NOT NULL CHECK (stock >= 0),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 ```
 
 ---
