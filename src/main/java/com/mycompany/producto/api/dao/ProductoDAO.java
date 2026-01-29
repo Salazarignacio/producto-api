@@ -30,7 +30,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
             stmt.setString(2, entity.getCategoria());
             stmt.setDouble(3, entity.getPrecio());
             stmt.setInt(4, entity.getStock());
-            stmt.setInt(5, entity.getCodigo());
+            stmt.setString(5, entity.getCodigo());
 
             int filasAfectadas = stmt.executeUpdate();
 
@@ -69,7 +69,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
                         rs.getString("categoria"),
                         rs.getDouble("precio"),
                         rs.getInt("stock"),
-                        rs.getInt("codigo")
+                        rs.getString("codigo")
                 );
 
                 prod.setId(rs.getLong("id"));
@@ -87,7 +87,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Producto prod = new Producto(rs.getString("articulo"), rs.getString("categoria"), rs.getDouble("precio"), rs.getInt("stock"), rs.getInt("codigo"));
+                Producto prod = new Producto(rs.getString("articulo"), rs.getString("categoria"), rs.getDouble("precio"), rs.getInt("stock"), rs.getString("codigo"));
                 prod.setId(rs.getLong("id"));
                 productos.add(prod);
             }
@@ -114,7 +114,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
             stmt.setString(2, entity.getCategoria());
             stmt.setDouble(3, entity.getPrecio());
             stmt.setInt(4, entity.getStock());
-            stmt.setInt(5, entity.getCodigo());
+            stmt.setString(5, entity.getCodigo());
             stmt.setLong(6, id);
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas == 0) {
@@ -142,14 +142,14 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
 
-    public Producto leerCodigo(Integer codigo) throws Exception {
+    public Producto leerCodigo(String codigo) throws Exception {
         if (codigo == null) {
             throw new IllegalArgumentException("Codigo inválido para leer producto");
         }
         String sql = "SELECT * FROM Producto WHERE codigo = ?";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, codigo);
+            stmt.setString(1, codigo);
 
             ResultSet rs = stmt.executeQuery();
 
@@ -159,7 +159,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
                         rs.getString("categoria"),
                         rs.getDouble("precio"),
                         rs.getInt("stock"),
-                        rs.getInt("codigo")
+                        rs.getString("codigo")
                 );
 
                 prod.setId(rs.getLong("id"));

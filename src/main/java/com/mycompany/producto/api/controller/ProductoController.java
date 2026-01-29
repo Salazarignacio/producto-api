@@ -81,7 +81,7 @@ public class ProductoController {
     }
 
     @GetMapping("/codigo/{code}")
-    public ResponseEntity<?> leerCodigo(@PathVariable int code) throws Exception {
+    public ResponseEntity<?> leerCodigo(@PathVariable String code) throws Exception {
         try {
             return ResponseEntity.ok(pService.findByCode(code));
         } catch (IllegalArgumentException e) {

@@ -3,13 +3,13 @@ package com.mycompany.producto.api.model;
 public class Producto {
 
     private Long id;
-    private int codigo;
+    private String codigo;
     private String articulo;
     private String categoria;
     private double precio;
     private int stock;
 
-    public Producto(String articulo, String categoria, double precio, int stock, int codigo) {
+    public Producto(String articulo, String categoria, double precio, int stock, String codigo) {
         this.codigo = codigo;
         this.articulo = articulo;
         this.categoria = categoria;
@@ -17,11 +17,11 @@ public class Producto {
         this.stock = stock;
     }
 
-    public int getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(int codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 

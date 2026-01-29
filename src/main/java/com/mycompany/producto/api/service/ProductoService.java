@@ -24,7 +24,7 @@ public class ProductoService implements GenericService<Producto> {
             throw new IllegalArgumentException("El producto no puede ser null");
         }
 
-        if (entity.getPrecio() <= 0) {
+        if (entity.getPrecio() < 0) {
             throw new IllegalArgumentException("El precio debe ser mayor a cero");
         }
 
@@ -83,10 +83,10 @@ public class ProductoService implements GenericService<Producto> {
         }
     }
 
-    public Producto findByCode(int code) throws Exception {
-        if (code <= 0) {
-            throw new IllegalArgumentException("Código inválido");
-        }
+    public Producto findByCode(String code) throws Exception {
+       // if (code <= 0) {
+       //     throw new IllegalArgumentException("Código inválido");
+        //}
 
         try {
             return prodDAO.leerCodigo(code);
