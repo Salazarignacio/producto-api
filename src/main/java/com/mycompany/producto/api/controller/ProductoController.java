@@ -38,6 +38,16 @@ public class ProductoController {
         }
     }
 
+    @RestController
+    @RequestMapping("/test")
+    public class TestController {
+
+        @GetMapping("/hola")
+        public String hola() {
+            return "Hola, el backend esta vivo 🚀";
+        }
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<Producto>> leerProductos() throws Exception {
         return ResponseEntity.ok(pService.findAll());
