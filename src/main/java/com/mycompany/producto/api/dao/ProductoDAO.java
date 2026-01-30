@@ -138,7 +138,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
                 throw new SQLException("ID no encontrado " + id);
             }
         } catch (SQLException e) {
-            throw new SQLException("Error al eliminar el producto con id " + id, e);
+            throw new SQLException("Error al eliminar el producto con id: " + id, e);
         }
     }
 

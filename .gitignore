@@ -8,6 +8,8 @@ dist/
 nbbuild/
 nbdist/
 .nb-gradle/
+src/main/resources/application.properties
+
 
 # Logs
 *.log
