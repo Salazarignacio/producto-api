@@ -1,13 +1,24 @@
 package com.mycompany.producto.api.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+
+@Entity
+@Table(name = "productos")
 public class Producto {
 
+    @Id
     private Long id;
+
     private String codigo;
     private String articulo;
     private String categoria;
     private double precio;
     private int stock;
+
+    public Producto() {
+    }
 
     public Producto(String articulo, String categoria, double precio, int stock, String codigo) {
         this.codigo = codigo;

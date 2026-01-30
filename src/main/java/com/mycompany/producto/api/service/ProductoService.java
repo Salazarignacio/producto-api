@@ -84,9 +84,9 @@ public class ProductoService implements GenericService<Producto> {
     }
 
     public Producto findByCode(String code) throws Exception {
-       // if (code <= 0) {
-       //     throw new IllegalArgumentException("Código inválido");
-        //}
+        if (code == null || code.isBlank()) {
+            throw new IllegalArgumentException("Código inválido");
+        }
 
         try {
             return prodDAO.leerCodigo(code);
