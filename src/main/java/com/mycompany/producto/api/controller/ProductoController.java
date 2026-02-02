@@ -43,6 +43,11 @@ public class ProductoController {
         return ResponseEntity.ok(pService.findAll());
     }
 
+    @GetMapping("/test")
+    public String testeando() throws Exception {
+        return "Testeando";
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> leerProducto(@PathVariable int id) throws Exception {
         try {
