@@ -190,13 +190,34 @@ Usa Postman, Insomnia o curl para probar los endpoints (ver sección "Endpoints 
 
 ## 🌐 Endpoints disponibles
 
-| Método | Endpoint          | Descripción                 |
-| ------ | ----------------- | --------------------------- |
-| POST   | `/productos`      | Crear un nuevo producto     |
-| GET    | `/productos/all`  | Obtener todos los productos |
-| GET    | `/productos/{id}` | Obtener un producto por ID  |
-| PUT    | `/productos/{id}` | Actualizar un producto      |
-| DELETE | `/productos/{id}` | Eliminar un producto        |
+| Método | Endpoint                    | Descripción                     |
+| ------ | --------------------------- | ------------------------------- |
+| POST   | `/api/productos`            | Crear un nuevo producto          |
+| GET    | `/api/productos/all`        | Obtener todos los productos      |
+| GET    | `/api/productos/{id}`       | Obtener un producto por ID       |
+| GET    | `/api/productos/codigo/{code}` | Buscar producto por código     |
+| PUT    | `/api/productos/{id}`       | Actualizar un producto           |
+| DELETE | `/api/productos/{id}`       | Eliminar un producto             |
+| GET    | `/api/productos/test`       | Endpoint de prueba               |
+
+### 💡 Optimización de Conexiones
+
+Este proyecto está **optimizado para bases de datos con límites de conexiones** (como Clever Cloud):
+
+- **Pool limitado a 2 conexiones** (máximo seguro para límite de 5)
+- **Timeouts ajustados** para evitar bloqueos
+- **Manejo automático de recursos** con try-with-resources
+- **Logging activado** para monitorear estado del pool
+
+#### Script de Pruebas
+Para verificar la optimización de conexiones:
+
+```bash
+# Ejecutar script completo de pruebas
+./test-connection-optimization.sh
+```
+
+El script prueba todos los endpoints y muestra el estado de las conexiones.
 
 ---
 
