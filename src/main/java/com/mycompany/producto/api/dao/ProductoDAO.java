@@ -23,7 +23,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
         if (entity == null) {
             throw new IllegalArgumentException("El producto no puede ser null");
         }
-        String sql = "INSERT INTO Producto (articulo, categoria, precio, stock, codigo) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO producto (articulo, categoria, precio, stock, codigo) VALUES (?,?,?,?,?)";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, entity.getArticulo());
@@ -56,43 +56,52 @@ public class ProductoDAO implements GenericDAO<Producto> {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para leer producto");
         }
-        String sql = "SELECT * FROM Producto WHERE id = ?";
+        String sql = "SELECT * FROM producto WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Producto prod = new Producto(
+                            rs.getString("articulo"),
+                            rs.getString("categoria"),
+                            rs.getDouble("precio"),
+                            rs.getInt("stock"),
+                            rs.getString("codigo")
+                    );
 
-            if (rs.next()) {
-                Producto prod = new Producto(
-                        rs.getString("articulo"),
-                        rs.getString("categoria"),
-                        rs.getDouble("precio"),
-                        rs.getInt("stock"),
-                        rs.getString("codigo")
-                );
-
-                prod.setId(rs.getLong("id"));
-                return prod;
-            } else {
-                throw new SQLException("No se encontró producto con id " + id);
+                    prod.setId(rs.getLong("id"));
+                    return prod;
+                } else {
+                    throw new SQLException("No se encontró producto con id " + id);
+                }
             }
         }
     }
 
     @Override
-    public ArrayList leerTodos() throws Exception {
-        ArrayList<Producto> productos = new ArrayList();
-        String sql = "SELECT * FROM Producto";
-        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+    public ArrayList<Producto> leerTodos() throws Exception {
+        ArrayList<Producto> productos = new ArrayList<>();
+        String sql = "SELECT * FROM producto";
+        try (Connection conn = dataSource.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
             while (rs.next()) {
-                Producto prod = new Producto(rs.getString("articulo"), rs.getString("categoria"), rs.getDouble("precio"), rs.getInt("stock"), rs.getString("codigo"));
+                Producto prod = new Producto(
+                    rs.getString("articulo"), 
+                    rs.getString("categoria"), 
+                    rs.getDouble("precio"), 
+                    rs.getInt("stock"), 
+                    rs.getString("codigo")
+                );
                 prod.setId(rs.getLong("id"));
                 productos.add(prod);
             }
         } catch (SQLException e) {
-            throw new SQLException("Error al leer la lista de productos", e);
+            throw new SQLException("Error al leer la lista de productos: " + e.getMessage(), e);
         }
         return productos;
     }
@@ -106,7 +115,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
         if (entity == null) {
             throw new IllegalArgumentException("El producto a actualizar no puede ser null");
         }
-        String sql = "UPDATE Producto "
+        String sql = "UPDATE producto "
                 + "SET articulo = ?, categoria = ?, precio = ?, stock = ?, codigo = ? "
                 + "WHERE id = ?";
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -130,7 +139,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para eliminar producto");
         }
-        String sql = "DELETE FROM Producto WHERE ID = ?";
+        String sql = "DELETE FROM producto WHERE ID = ?";
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int filasAfectadas = stmt.executeUpdate();
@@ -143,29 +152,30 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     public Producto leerCodigo(String codigo) throws Exception {
-        if (codigo == null) {
+        if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("Codigo inválido para leer producto");
         }
-        String sql = "SELECT * FROM Producto WHERE codigo = ?";
+        String sql = "SELECT * FROM producto WHERE codigo = ?";
 
-        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, codigo);
 
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Producto prod = new Producto(
+                            rs.getString("articulo"),
+                            rs.getString("categoria"),
+                            rs.getDouble("precio"),
+                            rs.getInt("stock"),
+                            rs.getString("codigo")
+                    );
 
-            if (rs.next()) {
-                Producto prod = new Producto(
-                        rs.getString("articulo"),
-                        rs.getString("categoria"),
-                        rs.getDouble("precio"),
-                        rs.getInt("stock"),
-                        rs.getString("codigo")
-                );
-
-                prod.setId(rs.getLong("id"));
-                return prod;
-            } else {
-                throw new SQLException("No se encontró producto con codigo " + codigo);
+                    prod.setId(rs.getLong("id"));
+                    return prod;
+                } else {
+                    throw new SQLException("No se encontró producto con codigo " + codigo);
+                }
             }
         }
     }

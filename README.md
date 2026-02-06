@@ -57,40 +57,167 @@ CREATE TABLE Producto (
 
 ## 🔌 Configuración JDBC
 
-Es necesario configurar la conexión a la base de datos antes de ejecutar la aplicación.
+La aplicación está configurada para leer las credenciales de base de datos desde **variables de entorno** con valores por defecto predefinidos. Esto permite una configuración flexible para diferentes entornos (desarrollo, staging, producción).
 
-Ejemplo de configuración en `application.properties`:
+### Variables de Entorno Disponibles
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/productos_db
-spring.datasource.username=usuario
-spring.datasource.password=password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+| Variable | Descripción | Valor por Defecto |
+|----------|-------------|-------------------|
+| `DB_URL` | URL de conexión JDBC | `jdbc:mysql://localhost:3306/db_user?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true` |
+| `DB_USERNAME` | Usuario de la base de datos | `javauser` |
+| `DB_PASSWORD` | Contraseña del usuario | `admin` |
+| `DB_DRIVER` | Driver JDBC a utilizar | `com.mysql.cj.jdbc.Driver` |
+
+### Formas de Configuración
+
+#### 1️⃣ **Uso con valores por defecto** (Desarrollo local)
+```bash
+# No se necesitan variables - usa los valores por defecto
+mvn spring-boot:run
 ```
 
-> ⚠️ **Nota:** Las credenciales no deben subirse al repositorio. Se recomienda usar variables de entorno o archivos de configuración locales.
+#### 2️⃣ **Configuración con variables de entorno** (Producción/Staging)
+```bash
+# Exportar variables (Linux/macOS)
+export DB_URL="jdbc:mysql://servidor-empresa.com:3306/produccion?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+export DB_USERNAME="prod_user"
+export DB_PASSWORD="contraseña_secreta"
+export DB_DRIVER="com.mysql.cj.jdbc.Driver"
+
+# Ejecutar aplicación
+mvn spring-boot:run
+```
+
+#### 3️⃣ **Configuración temporal** (One-liner)
+```bash
+DB_URL="jdbc:mysql://servidor-empresa.com:3306/produccion?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true" \
+DB_USERNAME="prod_user" \
+DB_PASSWORD="contraseña_secreta" \
+mvn spring-boot:run
+```
+
+#### 4️⃣ **Configuración con Docker Compose**
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    environment:
+      - DB_URL=jdbc:mysql://mysql:3306/produccion?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - DB_USERNAME=prod_user
+      - DB_PASSWORD=contraseña_secreta
+    depends_on:
+      - mysql
+```
+
+#### 5️⃣ **Configuración con archivo .env** (Recomendado para desarrollo)
+Crear archivo `.env` en la raíz del proyecto:
+```env
+DB_URL=jdbc:mysql://localhost:3306/mi_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+DB_USERNAME=mi_usuario
+DB_PASSWORD=mi_contraseña
+DB_DRIVER=com.mysql.cj.jdbc.Driver
+```
+
+### Archivo de configuración
+La configuración principal se encuentra en `src/main/resources/application.properties` con la siguiente sintaxis:
+
+```properties
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/db_user?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+spring.datasource.username=${DB_USERNAME:javauser}
+spring.datasource.password=${DB_PASSWORD:admin}
+spring.datasource.driver-class-name=${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+```
+
+> 💡 **Ventaja de esta configuración:**
+> - Los valores sensibles nunca se suben al repositorio
+> - Cada entorno puede tener su propia configuración
+> - La aplicación funciona sin configuración inicial (usa valores por defecto)
+> - Fácil integración con CI/CD y orquestación de contenedores
+
+> ⚠️ **Nota de Seguridad:** Nunca incluyas credenciales reales en el código fuente o commits. Usa siempre variables de entorno para información sensible.
 
 ---
 
 ## ▶️ Ejecución del proyecto
 
-1. Crear la base de datos.
-2. Ejecutar el script SQL para crear la tabla `Producto`.
-3. Configurar los datos de conexión JDBC.
-4. Ejecutar la aplicación.
-5. Probar los endpoints mediante Postman, Insomnia u otra herramienta similar.
+### Opción A: Con Docker Compose (Recomendado)
+
+1. **Iniciar base de datos con Docker**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Ejecutar la aplicación**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+### Opción B: Con base de datos externa
+
+1. **Crear base de datos y tabla** en tu servidor MySQL
+
+2. **Configurar variables de entorno** (opcional)
+   ```bash
+   export DB_URL="jdbc:mysql://tu-servidor:3306/produccion?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+   export DB_USERNAME="tu_usuario"
+   export DB_PASSWORD="tu_contraseña"
+   ```
+
+3. **Ejecutar la aplicación**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+### Opción C: Sin variables de entorno (Usa valores por defecto)
+
+1. **Asegurar que MySQL está corriendo** en localhost:3306 con base de datos `db_user`
+
+2. **Ejecutar aplicación** directamente
+   ```bash
+   mvn spring-boot:run
+   ```
+
+### Verificación
+La aplicación mostrará en consola:
+- ✅ Conexión a la base de datos establecida exitosamente
+- 🚀 API de Productos lista para recibir peticiones en http://localhost:8080
+
+### Probar Endpoints
+Usa Postman, Insomnia o curl para probar los endpoints (ver sección "Endpoints disponibles").
 
 ---
 
 ## 🌐 Endpoints disponibles
 
-| Método | Endpoint          | Descripción                 |
-| ------ | ----------------- | --------------------------- |
-| POST   | `/productos`      | Crear un nuevo producto     |
-| GET    | `/productos/all`  | Obtener todos los productos |
-| GET    | `/productos/{id}` | Obtener un producto por ID  |
-| PUT    | `/productos/{id}` | Actualizar un producto      |
-| DELETE | `/productos/{id}` | Eliminar un producto        |
+| Método | Endpoint                    | Descripción                     |
+| ------ | --------------------------- | ------------------------------- |
+| POST   | `/api/productos`            | Crear un nuevo producto          |
+| GET    | `/api/productos/all`        | Obtener todos los productos      |
+| GET    | `/api/productos/{id}`       | Obtener un producto por ID       |
+| GET    | `/api/productos/codigo/{code}` | Buscar producto por código     |
+| PUT    | `/api/productos/{id}`       | Actualizar un producto           |
+| DELETE | `/api/productos/{id}`       | Eliminar un producto             |
+| GET    | `/api/productos/test`       | Endpoint de prueba               |
+
+### 💡 Optimización de Conexiones
+
+Este proyecto está **optimizado para bases de datos con límites de conexiones** (como Clever Cloud):
+
+- **Pool limitado a 2 conexiones** (máximo seguro para límite de 5)
+- **Timeouts ajustados** para evitar bloqueos
+- **Manejo automático de recursos** con try-with-resources
+- **Logging activado** para monitorear estado del pool
+
+#### Script de Pruebas
+Para verificar la optimización de conexiones:
+
+```bash
+# Ejecutar script completo de pruebas
+./test-connection-optimization.sh
+```
+
+El script prueba todos los endpoints y muestra el estado de las conexiones.
 
 ---
 
