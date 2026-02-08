@@ -31,3 +31,10 @@
 .idea\dataSources
 .idea\dataSources.local.xml
 fly.toml
+
+.git
+.gitignore
+node_modules
+target
+.env
+

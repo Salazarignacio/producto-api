@@ -1,9 +1,20 @@
+# Usa Java 21
 FROM eclipse-temurin:21-jdk
 
+# Carpeta de trabajo
 WORKDIR /app
 
-COPY producto-api-1.0-SNAPSHOT.jar app.jar
+# Copiar todo el proyecto
+COPY . .
 
+# Dar permisos a mvnw
+RUN chmod +x mvnw
+
+# Compilar proyecto
+RUN ./mvnw package -DskipTests
+
+# Exponer puerto (Render usa 8080)
 EXPOSE 8080
 
-CMD ["java", "-jar", "app.jar"]
+# Ejecutar jar
+CMD ["java", "-jar", "target/*.jar"]
