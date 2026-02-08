@@ -1,20 +1,16 @@
-# Usa Java 21
 FROM eclipse-temurin:21-jdk
 
-# Carpeta de trabajo
 WORKDIR /app
 
-# Copiar todo el proyecto
+# instalar maven
+RUN apt-get update && apt-get install -y maven
+
+# copiar proyecto
 COPY . .
 
-# Dar permisos a mvnw
-RUN chmod +x mvnw
+# compilar
+RUN mvn clean package -DskipTests
 
-# Compilar proyecto
-RUN ./mvnw package -DskipTests
-
-# Exponer puerto (Render usa 8080)
 EXPOSE 8080
 
-# Ejecutar jar
 CMD ["java", "-jar", "target/*.jar"]
