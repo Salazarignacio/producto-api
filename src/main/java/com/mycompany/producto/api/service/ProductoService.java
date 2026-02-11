@@ -83,7 +83,7 @@ public class ProductoService implements GenericService<Producto> {
         }
     }
 
-    public Producto findByCode(String code) throws Exception {
+    public List<Producto> findByCode(String code) throws Exception {
         if (code == null || code.trim().isEmpty()) {
             throw new IllegalArgumentException("Código de producto inválido");
         }

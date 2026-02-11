@@ -1,9 +1,9 @@
 package com.mycompany.producto.api;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @SpringBootApplication
@@ -24,8 +24,8 @@ public class ProductoApi implements CommandLineRunner {
                 System.out.println("✅ Conexión a la base de datos establecida exitosamente!");
                 System.out.println("📍 URL de conexión: " + connection.getMetaData().getURL());
                 System.out.println("🗄️  Base de datos: " + connection.getCatalog());
-                System.out.println("🔌 Conexiones máximas configuradas: " + 
-                    dataSource.getConnection().getMetaData().getDatabaseProductName() + " (Pool optimizado)");
+                System.out.println("🔌 Conexiones máximas configuradas: "
+                        + dataSource.getConnection().getMetaData().getDatabaseProductName() + " (Pool optimizado)");
                 System.out.println("🚀 API de Productos lista para recibir peticiones en http://localhost:8080");
             }
         } catch (Exception e) {

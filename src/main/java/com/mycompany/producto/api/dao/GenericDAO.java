@@ -7,6 +7,8 @@ public interface GenericDAO<T> {
     void crear(T entity) throws Exception;
 
     T leer(Integer id) throws Exception;
+    
+    List<T> leerCodigo(String id) throws Exception;
 
     List<T> leerTodos() throws Exception;
 

@@ -8,6 +8,8 @@ public interface GenericService<T> {
 
     T findById(int id) throws Exception;
 
+    List<T> findByCode(String id) throws Exception;
+
     List<T> findAll() throws Exception;
 
     void update(int id, T entity) throws Exception;

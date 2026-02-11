@@ -58,8 +58,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
         String sql = "SELECT * FROM producto WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -85,17 +84,15 @@ public class ProductoDAO implements GenericDAO<Producto> {
     public ArrayList<Producto> leerTodos() throws Exception {
         ArrayList<Producto> productos = new ArrayList<>();
         String sql = "SELECT * FROM producto";
-        try (Connection conn = dataSource.getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 Producto prod = new Producto(
-                    rs.getString("articulo"), 
-                    rs.getString("categoria"), 
-                    rs.getDouble("precio"), 
-                    rs.getInt("stock"), 
-                    rs.getString("codigo")
+                        rs.getString("articulo"),
+                        rs.getString("categoria"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getString("codigo")
                 );
                 prod.setId(rs.getLong("id"));
                 productos.add(prod);
@@ -151,18 +148,30 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
 
-    public Producto leerCodigo(String codigo) throws Exception {
+    public List<Producto> leerCodigo(String codigo) throws Exception {
         if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("Codigo inválido para leer producto");
         }
-        String sql = "SELECT * FROM producto WHERE codigo = ?";
+        String sql = """
+        SELECT * FROM producto 
+        WHERE LOWER(codigo) LIKE LOWER(?) 
+        OR LOWER(articulo) LIKE LOWER(?) 
+        OR LOWER(categoria) LIKE LOWER(?)
+        """;
 
-        try (Connection conn = dataSource.getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        List<Producto> productos = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, codigo);
 
+            String busqueda = "%" + codigo + "%";
+
+            stmt.setString(1, busqueda);
+            stmt.setString(2, busqueda);
+            stmt.setString(3, busqueda);
+
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
+                while (rs.next()) {
                     Producto prod = new Producto(
                             rs.getString("articulo"),
                             rs.getString("categoria"),
@@ -172,11 +181,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
                     );
 
                     prod.setId(rs.getLong("id"));
-                    return prod;
-                } else {
-                    throw new SQLException("No se encontró producto con codigo " + codigo);
+                    productos.add(prod);
                 }
             }
+            return productos;
         }
     }
 
