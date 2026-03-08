@@ -3,7 +3,6 @@ package com.mycompany.producto.api.service;
 import com.mycompany.producto.api.dao.ProductoDAO;
 import com.mycompany.producto.api.model.Producto;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;

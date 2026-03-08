@@ -2,7 +2,6 @@ package com.mycompany.producto.api.controller;
 
 import com.mycompany.producto.api.model.Producto;
 import com.mycompany.producto.api.service.ProductoService;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
