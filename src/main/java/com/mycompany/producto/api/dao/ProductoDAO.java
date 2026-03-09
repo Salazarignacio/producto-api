@@ -108,13 +108,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para actualizar producto");
         }
-
         if (entity == null) {
             throw new IllegalArgumentException("El producto a actualizar no puede ser null");
         }
-        String sql = "UPDATE producto "
-                + "SET articulo = ?, categoria = ?, precio = ?, stock = ?, codigo = ? "
-                + "WHERE id = ?";
+        String sql = "UPDATE producto " + "SET articulo = ?, categoria = ?, precio = ?, stock = ?, codigo = ? " + "WHERE id = ?";
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, entity.getArticulo());
             stmt.setString(2, entity.getCategoria());

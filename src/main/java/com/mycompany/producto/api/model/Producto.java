@@ -8,6 +8,7 @@ public class Producto {
     private String categoria;
     private double precio;
     private int stock;
+    private Double porcentaje;
 
     public Producto(String articulo, String categoria, double precio, int stock, String codigo) {
         this.codigo = codigo;
@@ -19,6 +20,14 @@ public class Producto {
 
     public String getCodigo() {
         return codigo;
+    }
+
+    public Double getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(Double porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
     public void setCodigo(String codigo) {
