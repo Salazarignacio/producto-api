@@ -44,6 +44,28 @@ public class ProveedorDAO {
         }
     }
 
+    public Proveedor leer(Integer id) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para leer proveedor");
+        }
+        String sql = "SELECT * FROM proveedor WHERE id = ?";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Proveedor prov = new Proveedor(rs.getString("nombre"));
+
+                    prov.setId(rs.getLong("id"));
+                    return prov;
+                } else {
+                    throw new SQLException("No se encontró proveedor con id " + id);
+                }
+            }
+        }
+
+    }
+
     public ArrayList<Proveedor> leerTodos() throws Exception {
         ArrayList<Proveedor> proveedores = new ArrayList();
         String sql = "SELECT * FROM proveedor";

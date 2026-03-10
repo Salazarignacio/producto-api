@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,4 +38,15 @@ public class ProveedorController {
         return ResponseEntity.ok(proveedorService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> leerProveedor(@PathVariable int id) throws Exception {
+        try {
+            return ResponseEntity.ok(proveedorService.findById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Proveedor no encontrado");
+        }
+    }
 }
