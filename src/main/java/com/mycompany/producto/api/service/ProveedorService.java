@@ -39,4 +39,16 @@ public class ProveedorService {
             throw new RuntimeException("Error al obtener lista de proveedores", e);
         }
     }
+
+    public void delete(int id) throws Exception {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+
+        try {
+            proveedorDAO.eliminar(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar el proveedor con id " + id, e);
+        }
+    }
 }

@@ -82,4 +82,19 @@ public class ProveedorDAO {
         return proveedores;
     }
 
+    public void eliminar(Integer id) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para eliminar proveedor");
+        }
+        String sql = "DELETE FROM proveedor WHERE ID = ?";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new SQLException("ID no encontrado " + id);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el proveedor con id " + id, e);
+        }
+    }
 }
