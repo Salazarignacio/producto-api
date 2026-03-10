@@ -97,4 +97,25 @@ public class ProveedorDAO {
             throw new SQLException("Error al eliminar el proveedor con id " + id, e);
         }
     }
+
+    public void actualizar(Integer id, Proveedor entity) throws Exception {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para actualizar producto");
+        }
+        if (entity == null) {
+            throw new IllegalArgumentException("El proveedor a actualizar no puede ser null");
+        }
+        String sql = "UPDATE proveedor " + "SET nombre = ? " + "WHERE id = ?";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, entity.getNombre());
+            stmt.setLong(2, id);
+
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new SQLException("ID no encontrado" + id);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el proveedor con id " + id, e);
+        }
+    }
 }

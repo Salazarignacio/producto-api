@@ -51,4 +51,16 @@ public class ProveedorService {
             throw new RuntimeException("Error al eliminar el proveedor con id " + id, e);
         }
     }
+
+    public void update(int id, Proveedor entity) throws Exception {
+        if (entity == null) {
+            throw new IllegalArgumentException("El proveedor no puede ser null");
+        }
+
+        try {
+            proveedorDAO.actualizar(id, entity);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar el proveedor con id " + id, e);
+        }
+    }
 }
