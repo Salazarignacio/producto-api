@@ -6,16 +6,29 @@ public class Producto {
     private String codigo;
     private String articulo;
     private String categoria;
-    private double precio;
-    private int stock;
+    private Double precio;
+    private Integer stock;
     private Double porcentaje;
 
-    public Producto(String articulo, String categoria, double precio, int stock, String codigo) {
+    public Producto() {
+    }
+
+    public Producto(String articulo, String categoria, Double precio, Integer stock, String codigo) {
         this.codigo = codigo;
         this.articulo = articulo;
         this.categoria = categoria;
         this.precio = precio;
         this.stock = stock;
+        this.porcentaje = null;
+    }
+
+    public Producto(String articulo, String categoria, double precio, Integer stock, String codigo, Double porcentaje) {
+        this.codigo = codigo;
+        this.articulo = articulo;
+        this.categoria = categoria;
+        this.precio = precio;
+        this.stock = stock;
+        this.porcentaje = porcentaje;
     }
 
     public String getCodigo() {
@@ -46,11 +59,11 @@ public class Producto {
         return categoria;
     }
 
-    public double getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
@@ -66,11 +79,11 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public void setPrecio(double precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 

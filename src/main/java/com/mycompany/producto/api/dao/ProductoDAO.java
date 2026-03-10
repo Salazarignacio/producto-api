@@ -105,24 +105,48 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
     @Override
     public void actualizar(Integer id, Producto entity) throws Exception {
+
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para actualizar producto");
         }
+
         if (entity == null) {
             throw new IllegalArgumentException("El producto a actualizar no puede ser null");
         }
-        String sql = "UPDATE producto " + "SET articulo = ?, categoria = ?, precio = ?, stock = ?, codigo = ? " + "WHERE id = ?";
+
+        String sql;
+
+        if (entity.getPorcentaje() != null) {
+            sql = "UPDATE producto SET articulo = ?, categoria = ?, "
+                    + "precio = precio * (1 + ?/100), stock = ?, codigo = ? "
+                    + "WHERE id = ?";
+        } else {
+            sql = "UPDATE producto SET articulo = ?, categoria = ?, "
+                    + "precio = ?, stock = ?, codigo = ? "
+                    + "WHERE id = ?";
+        }
+
         try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, entity.getArticulo());
             stmt.setString(2, entity.getCategoria());
-            stmt.setDouble(3, entity.getPrecio());
+
+            if (entity.getPorcentaje() != null) {
+                stmt.setDouble(3, entity.getPorcentaje());
+            } else {
+                stmt.setDouble(3, entity.getPrecio());
+            }
+
             stmt.setInt(4, entity.getStock());
             stmt.setString(5, entity.getCodigo());
             stmt.setLong(6, id);
+
             int filasAfectadas = stmt.executeUpdate();
+
             if (filasAfectadas == 0) {
-                throw new SQLException("ID no encontrado" + id);
+                throw new SQLException("ID no encontrado " + id);
             }
+
         } catch (SQLException e) {
             throw new SQLException("Error al actualizar el producto con id " + id, e);
         }

@@ -58,6 +58,7 @@ public class ProductoService implements GenericService<Producto> {
 
     @Override
     public void update(int id, Producto entity) throws Exception {
+        System.out.println("a verr");
         if (entity == null) {
             throw new IllegalArgumentException("El producto no puede ser null");
         }
